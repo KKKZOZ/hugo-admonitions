@@ -59,7 +59,7 @@ Inspire from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish/)
 
 1. Install [Go programming language](https://go.dev/doc/install) in your operating system.
 
-2. Intialize your own hugo mod
+2. Initialize your own hugo module
 
 ```shell
 hugo mod init YOUR_OWN_GIT_REPOSITORY
@@ -100,7 +100,7 @@ hugo mod get -u
 git clone git@github.com:KKKZOZ/hugo-admonitions.git themes/hugo-admonitions
 ```
 
-2. Add `hugo-admonitions` as the left-most element of the theme list variable in your site's or theme's configuration file `hugo.yam`l or `hugo.toml`.
+2. Add `hugo-admonitions` as the left-most element of the theme list variable in your site's or theme's configuration file `hugo.yaml` or `hugo.toml`.
 
     Example, with `hugo.yaml`:
 
