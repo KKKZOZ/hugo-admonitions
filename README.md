@@ -17,6 +17,7 @@ Inspire from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish/)
     - [Hugo Module](#hugo-module)
     - [Git Clone](#git-clone)
   - [Usage](#usage)
+  - [Customization](#customization)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -37,7 +38,8 @@ Inspire from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish/)
   - English
   - Chinese
   - Swahili
-  - [Contribute with a new language](https://github.com/KKKZOZ/hugo-admonitions/pulls)
+  - German
+  - [Localization PRs are always welcome!](https://github.com/KKKZOZ/hugo-admonitions/pulls)
 
 ## Overview of all admonitions
 
@@ -51,7 +53,9 @@ Inspire from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish/)
 
 ### Header Only Mode
 
-![header-only-mode](./header-only-mode.png)
+<div align="center">
+  <img src="./header-only-mode.png" width="400" alt="header-only-mode">
+</div>
 
 ## Installation
 
@@ -97,7 +101,7 @@ hugo mod get -u
 1. Inside the folder of your Hugo site, run:
 
 ```bash
-git clone git@github.com:KKKZOZ/hugo-admonitions.git themes/hugo-admonitions
+git clone git@github.com:KKKZOZ/hugo-admonitions.git themes/hugo-admonitions --depth=1
 ```
 
 2. Add `hugo-admonitions` as the left-most element of the theme list variable in your site's or theme's configuration file `hugo.yaml` or `hugo.toml`.
@@ -127,7 +131,8 @@ Use the blockquote in this way:
 
 ![usage-1](./usage-1.png)
 
-Available callouts:
+<details>
+<summary>Available Callouts List</summary>
 
 - `[!ABSTRACT]`
 - `[!CAUTION]`
@@ -150,21 +155,25 @@ Available callouts:
 - `[!TIP]`
 - `[!WARNING]`
 
+</details>
+
+<br/>
+
 > [!NOTE]
 > Unsupported callout types will default to `[!NOTE]`
 
 Or you can customize the title by using any of them:
 
 ```markdown
-> [!TIP] Summary
-> This is a summary using the `TIP` callout!
+> [!IDEA] Summary
+> This is a summary using the `IDEA` callout!
 ```
 
 ![usage-2](./usage-2.png)
 
 ```markdown
-> [!IDEA] Summary
-> This is a summary using the `IDEA` callout!
+> [!MEMO] Summary
+> This is a summary using the `MEMO` callout!
 ```
 
 ![usage-3](./usage-3.png)
@@ -180,14 +189,48 @@ You can choose to use the Header Only Mode!
 
 > [!SUCCESS] Congratulations! Your code has been successfully deployed to production
 
-> [!WARNING] Warning: This operation will delete all data. Please ensure you have a backup
+> [!WARNING] Warning: This operation will delete all data. 
 ```
 
 ![usage-4](./usage-4.png)
 
+## Customization
+
+Override styles by copying the [source](./assets/sass/vendors/_admonitions.scss) into `assets/sass/vendors/_admonitions.scss` and changing as needed.
+
+If you are still confused, see the detailed process below:
+
+1. **Create the Directory Structure**
+   - In your Hugo project's root directory, create the following folder structure:
+   ```
+   your-hugo-project/
+   ├── assets/
+   │   └── sass/
+   │       └── vendors/
+   ```
+
+    This can be done by running:
+    ```shell
+    mkdir -p assets/sass/vendors
+    ```
+
+2. **Copy the Source File**
+   - Copy the original `_admonitions.scss` file, which is located in `themes/hugo-admonitions/assets/sass/vendors/_admonitions.scss` 
+   - Paste it into your project at: `assets/sass/vendors/_admonitions.scss`
+   - This will override the module's default styles
+  
+   This can be done by running:
+   ```shell
+   cp themes/hugo-admonitions/assets/sass/vendors/_admonitions.scss assets/sass/vendors/_admonitions.scss
+   ```
+
+3. **Customize the Styles**
+   - Modify the SCSS code according to your needs
+   - Your changes will take precedence over the original module styles
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a [Pull Request](https://github.com/KKKZOZ/hugo-admonitions/pulls).
 
 ## License
 
