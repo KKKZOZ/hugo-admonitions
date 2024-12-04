@@ -54,7 +54,7 @@ Inspire from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish/)
 ### Header Only Mode
 
 <div align="center">
-  <img src="./header-only-mode.png" width="400" alt="header-only-mode">
+  <img src="./header-only-mode.png" width="500" alt="header-only-mode">
 </div>
 
 ## Installation
@@ -145,6 +145,7 @@ Use the blockquote in this way:
 - `[!GOAL]`
 - `[!IDEA]`
 - `[!IMPORTANT]`
+- `[!INFO]`
 - `[!MEMO]`
 - `[!NOTE]`
 - `[!NOTIFY]`
