@@ -1,0 +1,22 @@
+admonitions:
+  abstract: Abstrakt
+  caution: Pozor
+  code: Kód
+  conclusion: Závěr
+  danger: Nebezpečí
+  error: Chyba
+  example: Příklad
+  experiment: Experiment
+  goal: Cíl
+  idea: Myšlenka
+  important: Důležité
+  info: Informace
+  memo: Zápis
+  note: Poznámka
+  notify: Oznámení
+  question: Otázka
+  quote: Citát
+  success: Úspěch
+  task: Úkol
+  tip: Tip
+  warning: Varování
