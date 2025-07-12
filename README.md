@@ -58,6 +58,7 @@ If you find this project useful, please consider giving it a star! ⭐
   - German
   - Swahili
   - Czech
+  - Polish
   - [Localization PRs are always welcome!](https://github.com/KKKZOZ/hugo-admonitions/pulls)
 
 ## Overview of all admonitions
