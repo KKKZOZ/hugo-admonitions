@@ -4,7 +4,7 @@
   {{- /* This is an Admonition - Render using admonition logic */}}
 
   {{- /* Enforce a minimum required Hugo version. */}}
-  {{- $minHugoVersion := "0.140.0" }}
+  {{- $minHugoVersion := "0.100.0" }}
   {{- if lt hugo.Version $minHugoVersion }}
     {{- errorf "Hugo-admonitions requires Hugo v%s or later. Please upgrade Hugo to v%s or higher." $minHugoVersion $minHugoVersion }}
   {{- end -}}
@@ -16,6 +16,7 @@
         "enableSourceMap" (not hugo.IsProduction)
         "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
         "targetPath" "css/vendors/admonitions.css"
+        "transpiler" "dartsass"
       }}
       {{- with . | toCSS $opts }}
         {{- if hugo.IsProduction }}

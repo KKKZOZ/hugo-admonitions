@@ -2,12 +2,18 @@
 // Hugo Admonitions Styling with Configurable Theme Colors and Dark Mode Selector
 
 // =============================================================================
+// --- Modern Sass Module Imports ---
+// =============================================================================
+@use 'sass:map';
+@use 'sass:list';
+
+// =============================================================================
 // --- User Customization Hook ---
 // =============================================================================
 // Import user-defined variables.
 // This imported file should define variables directly (e.g., $admonition-light-bg: #mycolor;)
 // or define override maps like $admonition-colors-overrides.
-@import "admonitions-user-settings";
+@use "admonitions-user-settings" as *;
 
 // =============================================================================
 // --- Configuration (with !default) ---
@@ -95,7 +101,7 @@ $admonition-colors-base: (
 
 // Merge base colors with user overrides to get the final color map.
 // User's overrides will take precedence.
-$admonition-colors: map-merge(
+$admonition-colors: map.merge(
   $admonition-colors-base,
   $admonition-colors-overrides
 );
@@ -209,7 +215,7 @@ $admonition-colors: map-merge(
       // Determine final header color with override priority:
       // 1. Per-type override map
       // 2. Default admonition type color
-      $type-specific-color: map-get(
+      $type-specific-color: map.get(
         $admonition-light-header-text-overrides,
         $type
       );
@@ -251,7 +257,7 @@ $admonition-colors: map-merge(
 // =============================================================================
 // --- Dark Mode Styling ---
 // =============================================================================
-#{join($admonition-dark-selector, ", ")} {
+#{list.join($admonition-dark-selector, ", ")} {
   @each $type, $color in $admonition-colors {
     .admonition.#{$type} {
       // e.g., html[data-theme="dark"] .admonition.question
@@ -262,7 +268,7 @@ $admonition-colors: map-merge(
       > .admonition-header {
         // Only apply a color if a dark-mode, per-type override exists.
         // Otherwise, the color from the light mode rule will cascade.
-        $dark-type-specific-color: map-get(
+        $dark-type-specific-color: map.get(
           $admonition-dark-header-text-overrides,
           $type
         );
