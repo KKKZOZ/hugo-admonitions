@@ -4,13 +4,16 @@
   {{- /* This is an Admonition - Render using admonition logic */}}
 
   {{- /* Enforce a minimum required Hugo version. */}}
-  {{- $minHugoVersion := "0.100.0" }}
+  {{- $minHugoVersion := "0.140.0" }}
   {{- if lt hugo.Version $minHugoVersion }}
     {{- errorf "Hugo-admonitions requires Hugo v%s or later. Please upgrade Hugo to v%s or higher." $minHugoVersion $minHugoVersion }}
   {{- end -}}
 
-  {{- /* Transpile Sass to CSS and render the link element once per page. */}}
+  {{- /* Load styles once per page - try SCSS compilation first, fall back to pre-compiled CSS */}}
   {{- if not (.Page.Store.Get "admonition-style-loaded-flag") }}
+    {{- $cssLoaded := false }}
+
+    {{- /* Try to compile SCSS (requires Hugo Extended or Dart Sass) */}}
     {{- with resources.Get "sass/vendors/_admonitions.scss" }}
       {{- $opts := dict
         "enableSourceMap" (not hugo.IsProduction)
@@ -19,6 +22,7 @@
         "transpiler" "dartsass"
       }}
       {{- with . | toCSS $opts }}
+        {{- $cssLoaded = true }}
         {{- if hugo.IsProduction }}
           {{- with . | fingerprint }}
             <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
@@ -28,6 +32,23 @@
         {{- end }}
       {{- end }}
     {{- end }}
+
+    {{- /* Fall back to pre-compiled CSS if SCSS compilation failed or unavailable */}}
+    {{- if not $cssLoaded }}
+      {{- $cssFile := cond hugo.IsProduction "css/vendors/admonitions.min.css" "css/vendors/admonitions.css" }}
+      {{- with resources.Get $cssFile }}
+        {{- if hugo.IsProduction }}
+          {{- with . | fingerprint }}
+            <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+          {{- end }}
+        {{- else }}
+          <link rel="stylesheet" href="{{ .RelPermalink }}">
+        {{- end }}
+      {{- else }}
+        {{- warnf "Admonitions CSS not found. Neither SCSS compilation nor pre-compiled CSS is available. Ensure Hugo Extended is installed or the pre-compiled CSS exists at /assets/%s" $cssFile }}
+      {{- end }}
+    {{- end }}
+
     {{- .Page.Store.Set "admonition-style-loaded-flag" true }}
   {{- end }}
 
