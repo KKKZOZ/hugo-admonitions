@@ -1,0 +1,22 @@
+admonitions:
+  abstract: 摘要
+  caution: 注意
+  code: 程式
+  conclusion: 結論
+  danger: 危險
+  error: 錯誤
+  example: 範例
+  experiment: 實驗
+  goal: 目標
+  idea: 想法
+  important: 重要
+  info: 資訊
+  memo: 備忘
+  note: 備註
+  notify: 通知
+  question: 問題
+  quote: 引用
+  success: 成功
+  task: 任務
+  tip: 提示
+  warning: 警告
