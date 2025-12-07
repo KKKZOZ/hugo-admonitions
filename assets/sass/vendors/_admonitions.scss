@@ -10,6 +10,13 @@
 @import "admonitions-user-settings";
 
 // =============================================================================
+// --- Helper Function ---
+// =============================================================================
+@function hex-to-rgb($color) {
+  @return red($color), green($color), blue($color);
+}
+
+// =============================================================================
 // --- Configuration (with !default) ---
 // =============================================================================
 
@@ -101,6 +108,42 @@ $admonition-colors: map-merge(
 );
 
 // =============================================================================
+// --- CSS Variables ---
+// =============================================================================
+
+:root {
+  --adm-bg: #{$admonition-light-bg};
+  --adm-text: #{$admonition-light-text};
+  --adm-code-bg: #{$admonition-light-code-bg};
+  --adm-code-text: #{$admonition-light-code-text};
+  --adm-blockquote-border: #{$admonition-light-blockquote-border};
+  --adm-header-bg-opacity: #{$admonition-light-header-bg-opacity};
+  
+  @each $type, $color in $admonition-colors {
+    --adm-#{$type}: #{$color};
+    --adm-#{$type}-rgb: #{hex-to-rgb($color)};
+    
+    $override-color: map-get($admonition-light-header-text-overrides, $type);
+    @if $override-color {
+      --adm-#{$type}-header: #{$override-color};
+    }
+  }
+}
+
+#{join($admonition-dark-selector, ", ")} {
+  --adm-bg: #{$admonition-dark-bg};
+  --adm-text: #{$admonition-dark-text};
+  --adm-code-bg: #{$admonition-dark-code-bg};
+  --adm-code-text: #{$admonition-dark-code-text};
+  --adm-blockquote-border: #{$admonition-dark-blockquote-border};
+  --adm-header-bg-opacity: #{$admonition-dark-header-bg-opacity};
+  
+  @each $type, $override-color in $admonition-dark-header-text-overrides {
+    --adm-#{$type}-header: #{$override-color};
+  }
+}
+
+// =============================================================================
 // --- Base Admonition Structure & Styles ---
 // =============================================================================
 
@@ -123,6 +166,7 @@ $admonition-colors: map-merge(
   transition: color 0.3s ease;
   position: relative;
   z-index: 1;
+  color: var(--adm-type-header, var(--adm-type-color));
 
   svg {
     width: 1.1em;
@@ -141,9 +185,10 @@ $admonition-colors: map-merge(
 .admonition-content {
   padding: 1rem;
   border-radius: 0 0 4px 4px;
-  // Background-color and color are applied with higher specificity inside the @each loops.
   transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
+  background-color: var(--adm-bg);
+  color: var(--adm-text);
 
   // Basic structure/spacing for nested elements
   p {
@@ -159,29 +204,32 @@ $admonition-colors: map-merge(
   blockquote {
     margin: 0 0 0.75rem 0;
     padding-left: 1rem;
-    border-left-width: 3px; // Set width here, color set below
-    border-left-style: solid;
+    border-left: 3px solid var(--adm-blockquote-border);
     font-style: italic;
     transition: border-color 0.3s ease, color 0.3s ease; // Keep transitions
+    color: inherit;
   }
   code:not(pre > code) {
     // Inline code, excluding code blocks
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 0.9em;
-    transition: background-color 0.3s ease, color 0.3s ease; // Keep transitions
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--adm-code-bg);
+    color: var(--adm-code-text);
   }
   pre {
     margin: 0 0 0.75rem 0;
     padding: 0.8rem 1rem;
     border-radius: 3px;
     overflow-x: auto;
-    transition: background-color 0.3s ease; // Keep transition for pre bg
+    transition: background-color 0.3s ease; // Keep transitions
+    background-color: var(--adm-code-bg);
 
     code {
       // Code inside pre
       background-color: transparent !important;
-      color: inherit;
+      color: var(--adm-code-text);
       padding: 0;
       font-size: inherit;
       border-radius: 0;
@@ -194,116 +242,16 @@ $admonition-colors: map-merge(
 }
 
 // =============================================================================
-// --- Generate Admonition Type Styles (Light Mode Default) ---
+// --- Generate Admonition Type Styles ---
 // =============================================================================
 @each $type, $color in $admonition-colors {
   .admonition.#{$type} {
-    // e.g., .admonition.question
-    // Apply border color
-    border-left: 4px solid $color;
-    // Apply the TINTED background to the *entire* admonition block
-    background-color: rgba($color, $admonition-light-header-bg-opacity);
-
-    // Target the DIRECT child header
-    > .admonition-header {
-      // Determine final header color with override priority:
-      // 1. Per-type override map
-      // 2. Default admonition type color
-      $type-specific-color: map-get(
-        $admonition-light-header-text-overrides,
-        $type
-      );
-      $final-color: if($type-specific-color, $type-specific-color, $color);
-
-      color: $final-color;
-      svg {
-        fill: $final-color;
-      }
-    }
-
-    // Target the DIRECT child content
-    > .admonition-content {
-      // Override the tinted background for the content area with the SOLID light theme bg
-      background-color: $admonition-light-bg;
-      color: $admonition-light-text;
-
-      // Apply light theme colors to nested elements WITHIN this specific admonition type
-      blockquote {
-        border-left-color: $admonition-light-blockquote-border;
-        color: inherit; // Inherit $admonition-light-text
-      }
-      code:not(pre > code) {
-        // Inline code
-        background-color: $admonition-light-code-bg;
-        color: $admonition-light-code-text;
-      }
-      pre {
-        background-color: $admonition-light-code-bg;
-        // Text color in pre > code usually handled by syntax highlighter
-        code {
-          color: $admonition-light-code-text;
-        } // Fallback color if needed
-      }
-    }
+    border-left: 4px solid var(--adm-#{$type});
+    background-color: rgba(var(--adm-#{$type}-rgb), var(--adm-header-bg-opacity));
+    --adm-type-color: var(--adm-#{$type});
+    --adm-type-header: var(--adm-#{$type}-header, var(--adm-#{$type}));
   }
 }
-
-// =============================================================================
-// --- Dark Mode Styling ---
-// =============================================================================
-#{join($admonition-dark-selector, ", ")} {
-  @each $type, $color in $admonition-colors {
-    .admonition.#{$type} {
-      // e.g., html[data-theme="dark"] .admonition.question
-      // Apply the TINTED dark background to the *entire* admonition block
-      background-color: rgba($color, $admonition-dark-header-bg-opacity);
-
-      // Target the DIRECT child header
-      > .admonition-header {
-        // Only apply a color if a dark-mode, per-type override exists.
-        // Otherwise, the color from the light mode rule will cascade.
-        $dark-type-specific-color: map-get(
-          $admonition-dark-header-text-overrides,
-          $type
-        );
-
-        // Only generate CSS if a dark mode override was found
-        @if $dark-type-specific-color {
-          color: $dark-type-specific-color;
-          svg {
-            fill: $dark-type-specific-color;
-          }
-        }
-      }
-
-      // Target the DIRECT child content
-      > .admonition-content {
-        // Override the tinted background for the content area with the SOLID dark theme bg
-        background-color: $admonition-dark-bg;
-        color: $admonition-dark-text;
-
-        // Apply dark theme colors to nested elements WITHIN this specific admonition type
-        blockquote {
-          border-left-color: $admonition-dark-blockquote-border;
-          color: inherit; // Inherit $admonition-dark-text
-        }
-        code:not(pre > code) {
-          // Inline code
-          background-color: $admonition-dark-code-bg;
-          color: $admonition-dark-code-text;
-        }
-        pre {
-          background-color: $admonition-dark-code-bg;
-          // Text color in pre > code usually handled by syntax highlighter
-          code {
-            color: $admonition-dark-code-text;
-          } // Fallback color if needed
-        }
-      }
-    }
-  }
-}
-// --- End Dark Mode Styling ---
 
 // =============================================================================
 // --- Custom Admonition Folding Marker ---
