@@ -74,6 +74,10 @@ $admonition-dark-header-bg-opacity: 0.1 !default; // Opacity for dark mode backg
 // Users should define '$admonition-colors-overrides' in their custom-variables file.
 $admonition-colors-overrides: () !default;
 
+// User-provided map for overriding admonition type colors in dark mode.
+// If not specified, light mode colors will be used.
+$admonition-dark-colors-overrides: () !default;
+
 $admonition-colors-base: (
   abstract: #209fb5,
   caution: #e64553,
@@ -107,6 +111,12 @@ $admonition-colors: map-merge(
   $admonition-colors-overrides
 );
 
+// Dark mode colors: use light mode colors as default, then apply dark mode overrides
+$admonition-dark-colors: map-merge(
+  $admonition-colors,
+  $admonition-dark-colors-overrides
+);
+
 // =============================================================================
 // --- CSS Variables ---
 // =============================================================================
@@ -137,6 +147,11 @@ $admonition-colors: map-merge(
   --adm-code-text: #{$admonition-dark-code-text};
   --adm-blockquote-border: #{$admonition-dark-blockquote-border};
   --adm-header-bg-opacity: #{$admonition-dark-header-bg-opacity};
+  
+  @each $type, $color in $admonition-dark-colors {
+    --adm-#{$type}: #{$color};
+    --adm-#{$type}-rgb: #{hex-to-rgb($color)};
+  }
   
   @each $type, $override-color in $admonition-dark-header-text-overrides {
     --adm-#{$type}-header: #{$override-color};
