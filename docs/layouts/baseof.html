@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" data-theme="light">
+<head>
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+
+      const toggleDarkMode = () => {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        document.querySelector('.theme-toggle').textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.querySelector('.theme-toggle');
+        toggleButton.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light Mode' : 'Dark Mode';
+        toggleButton.addEventListener('click', toggleDarkMode);
+      });
+    })();
+  </script>
+  <style>
+    body {
+      max-width: 80ch;
+      margin: 0 auto;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    html[data-theme="light"] body {
+      background-color: #ffffff;
+      color: #000000;
+    }
+    html[data-theme="dark"] body {
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+    }
+    .theme-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-toggle">Dark Mode</div>
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+baseURL = 'https://example.org/'
+languageCode = 'en'
+defaultContentLanguage = "en"
+title = 'Hugo Admonition by KKKZOZ'
+
+[module]
+  [[module.mounts]]
+    disableWatch = false
+    source = 'layouts'
+    target = 'layouts'
+  [[module.mounts]]
+    disableWatch = false
+    source = '../layouts'
+    target = 'layouts'
+  [[module.mounts]]
+    disableWatch = false
+    source = 'assets'
+    target = 'assets'
+  [[module.mounts]]
+    disableWatch = false
+    source = '../assets'
+    target = 'assets'
+  [[module.mounts]]
+    disableWatch = false
+    source = '../i18n'
+    target = 'i18n'
