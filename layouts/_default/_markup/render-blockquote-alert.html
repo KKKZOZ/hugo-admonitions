@@ -9,26 +9,6 @@
     {{- errorf "Hugo-admonitions requires Hugo v%s or later. Please upgrade Hugo to v%s or higher." $minHugoVersion $minHugoVersion }}
   {{- end -}}
 
-  {{- /* Transpile Sass to CSS and render the link element once per page. */}}
-  {{- if eq .Ordinal 0 }}
-    {{- with resources.Get "sass/vendors/_admonitions.scss" }}
-      {{- $opts := dict
-        "enableSourceMap" (not hugo.IsProduction)
-        "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
-        "targetPath" "css/vendors/admonitions.css"
-      }}
-      {{- with . | toCSS $opts }}
-        {{- if hugo.IsProduction }}
-          {{- with . | fingerprint }}
-            <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-          {{- end }}
-        {{- else }}
-          <link rel="stylesheet" href="{{ .RelPermalink }}">
-        {{- end }}
-      {{- end }}
-    {{- end }}
-  {{- end }}
-
   {{- /* Map alert type to icon */}}
   {{- $icons := dict 
     "abstract"   "file-lines-solid.svg"
@@ -55,47 +35,79 @@
   }}
 
   {{- /* Determine type and title */}}
-  {{- $type := cond (index $icons .AlertType) .AlertType "note" }}
-  {{- $title := or .AlertTitle (T (printf "admonitions.%s" $type)) (title $type) }}
-  {{- $iconFile := index $icons $type }}
-  {{- $partial := printf "admonitions/icons/%s" $iconFile }}
+  {{- /* Validate that AlertType exists and is a valid admonition type */}}
+  {{- /* If AlertType is missing or invalid, fall back to regular blockquote rendering */}}
+  {{- $alertType := .AlertType | default "" | lower }}
+  {{- if and $alertType (index $icons $alertType) }}
+    {{- /* Valid admonition - proceed with rendering */}}
+    {{- $type := $alertType }}
+    {{- $title := or .AlertTitle (T (printf "admonitions.%s" $type)) (title $type) }}
+    {{- $iconFile := index $icons $type }}
+    {{- $partial := printf "admonitions/icons/%s" $iconFile }}
 
-  {{- /* Check if icon exists */}}
-  {{- if not (templates.Exists (printf "partials/%s" $partial)) }}
-    {{- errorf "The blockquote render hook was unable to find the icon partial at layouts/partials/%s for admonition type '%s'." $partial $type }}
-  {{- end }}
-
-  {{- /* Check if .AlertSign exists to determine if it's foldable */}}
-  {{- if .AlertSign }}
-    {{- /* --- START Foldable Admonition HTML (using <details>) --- */}}
-    {{- /* The 'open' attribute could be conditionally added based on .AlertSign, e.g., if eq .AlertSign "-" */}}
-    <details class="admonition {{ $type }}">
-      <summary class="admonition-header">
-        {{- partialCached $partial . }}
-        <span>{{ $title }}</span>
-        {{- /* Optional: Add a custom chevron/indicator here via span/svg if you hide the default one */}}
-      </summary>
-      {{- with .Text }}
-      <div class="admonition-content">
-        {{ . }}
-      </div>
+    {{- /* Transpile Sass to CSS and render the link element once per page. */}}
+    {{- if eq .Ordinal 0 }}
+      {{- with resources.Get "sass/vendors/_admonitions.scss" }}
+        {{- $opts := dict
+          "enableSourceMap" (not hugo.IsProduction)
+          "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
+          "targetPath" "css/vendors/admonitions.css"
+        }}
+        {{- with . | toCSS $opts }}
+          {{- if hugo.IsProduction }}
+            {{- with . | fingerprint }}
+              <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+            {{- end }}
+          {{- else }}
+            <link rel="stylesheet" href="{{ .RelPermalink }}">
+          {{- end }}
+        {{- end }}
       {{- end }}
-    </details>
-    {{- /* --- END Foldable Admonition HTML --- */}}
+    {{- end }}
+
+    {{- /* Check if icon exists */}}
+    {{- if not (templates.Exists (printf "partials/%s" $partial)) }}
+      {{- errorf "The blockquote render hook was unable to find the icon partial at layouts/partials/%s for admonition type '%s'." $partial $type }}
+    {{- end }}
+
+    {{- /* Check if .AlertSign exists to determine if it's foldable */}}
+    {{- if .AlertSign }}
+      {{- /* --- START Foldable Admonition HTML (using <details>) --- */}}
+      {{- /* The 'open' attribute could be conditionally added based on .AlertSign, e.g., if eq .AlertSign "-" */}}
+      <details class="admonition {{ $type }}">
+        <summary class="admonition-header">
+          {{- partialCached $partial . }}
+          <span>{{ $title }}</span>
+          {{- /* Optional: Add a custom chevron/indicator here via span/svg if you hide the default one */}}
+        </summary>
+        {{- with .Text }}
+        <div class="admonition-content">
+          {{ . }}
+        </div>
+        {{- end }}
+      </details>
+      {{- /* --- END Foldable Admonition HTML --- */}}
+    {{- else }}
+      {{- /* --- START Non-Foldable Admonition HTML (using <div>) --- */}}
+      <div class="admonition {{ $type }}">
+        <div class="admonition-header">
+          {{- partialCached $partial . }}
+          <span>{{ $title }}</span>
+        </div>
+        {{- with .Text }}
+        <div class="admonition-content">
+          {{ . }}
+        </div>
+        {{- end }}
+      </div>
+      {{- /* --- END Non-Foldable Admonition HTML --- */}}
+    {{- end }}
   {{- else }}
-    {{- /* --- START Non-Foldable Admonition HTML (using <div>) --- */}}
-    <div class="admonition {{ $type }}">
-      <div class="admonition-header">
-        {{- partialCached $partial . }}
-        <span>{{ $title }}</span>
-      </div>
-      {{- with .Text }}
-      <div class="admonition-content">
-        {{ . }}
-      </div>
-      {{- end }}
-    </div>
-    {{- /* --- END Non-Foldable Admonition HTML --- */}}
+    {{- /* Type is "alert" but AlertType is missing or invalid - fall back to regular blockquote */}}
+    {{- /* This handles edge cases where blockquote parsing might be ambiguous */}}
+    <blockquote>
+      {{ .Text }}
+    </blockquote>
   {{- end }}
 
 {{- else -}}
