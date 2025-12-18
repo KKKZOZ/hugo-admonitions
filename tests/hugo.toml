@@ -1,0 +1,20 @@
+baseURL = 'http://localhost/'
+languageCode = 'en'
+defaultContentLanguage = "en"
+title = 'Hugo Admonitions Test Suite'
+
+[module]
+  [[module.mounts]]
+    source = '../layouts'
+    target = 'layouts'
+  [[module.mounts]]
+    source = '../assets'
+    target = 'assets'
+  [[module.mounts]]
+    source = '../i18n'
+    target = 'i18n'
+
+[module.hugoVersion]
+extended = true
+min = '0.140.0'
+

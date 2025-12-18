@@ -3,6 +3,10 @@
 public/
 resources/
 
+# Test output
+tests/public/
+tests/resources/
+
 # Node
 node_modules/
 
