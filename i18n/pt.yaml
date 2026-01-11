@@ -5,7 +5,7 @@ admonitions:
   conclusion: Conclusão
   danger: Perigo
   error: Erro
-  example: Examplo
+  example: Exemplo
   experiment: Experimento
   goal: Objetivo
   idea: Ideia
@@ -16,7 +16,7 @@ admonitions:
   notify: Notificação
   question: Questão
   quote: Citação
-  success: Successo
+  success: Sucesso
   task: Tarefa
   tip: Dica
   warning: Aviso
