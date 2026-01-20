@@ -1,0 +1,22 @@
+admonitions:
+  abstract: 개요
+  caution: 주의
+  code: 코드
+  conclusion: 결론
+  danger: 위험
+  error: 오류
+  example: 예시
+  experiment: 실험
+  goal: 목표
+  idea: 아이디어
+  important: 중요
+  info: 정보
+  memo: 메모
+  note: 참고
+  notify: 알림
+  question: 질문
+  quote: 인용
+  success: 성공
+  task: 작업
+  tip: 팁
+  warning: 경고
