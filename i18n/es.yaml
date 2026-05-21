@@ -1,0 +1,22 @@
+admonitions:
+  abstract: Resumen
+  caution: Precaución
+  code: Código
+  conclusion: Conclusión
+  danger: Peligro
+  error: Error
+  example: Ejemplo
+  experiment: Experimento
+  goal: Objetivo
+  idea: Idea
+  important: Importante
+  info: Info
+  memo: Memorando
+  note: Nota
+  notify: Notificación
+  question: Pregunta
+  quote: Frase
+  success: Éxito
+  task: Tarea
+  tip: Consejo
+  warning: Advertencia
