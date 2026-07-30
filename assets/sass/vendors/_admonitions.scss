@@ -2,18 +2,27 @@
 // Hugo Admonitions Styling with Configurable Theme Colors and Dark Mode Selector
 
 // =============================================================================
+// --- Modern Sass Module Imports ---
+// =============================================================================
+@use "sass:map";
+@use "sass:list";
+@use "sass:color";
+
+// =============================================================================
 // --- User Customization Hook ---
 // =============================================================================
 // Import user-defined variables.
 // This imported file should define variables directly (e.g., $admonition-light-bg: #mycolor;)
 // or define override maps like $admonition-colors-overrides.
-@import "admonitions-user-settings";
+@use "admonitions-user-settings" as *;
 
 // =============================================================================
 // --- Helper Function ---
 // =============================================================================
 @function hex-to-rgb($color) {
-  @return red($color), green($color), blue($color);
+  @return color.channel($color, "red", $space: rgb),
+    color.channel($color, "green", $space: rgb),
+    color.channel($color, "blue", $space: rgb);
 }
 
 // =============================================================================
@@ -106,13 +115,13 @@ $admonition-colors-base: (
 
 // Merge base colors with user overrides to get the final color map.
 // User's overrides will take precedence.
-$admonition-colors: map-merge(
+$admonition-colors: map.merge(
   $admonition-colors-base,
   $admonition-colors-overrides
 );
 
 // Dark mode colors: use light mode colors as default, then apply dark mode overrides
-$admonition-dark-colors: map-merge(
+$admonition-dark-colors: map.merge(
   $admonition-colors,
   $admonition-dark-colors-overrides
 );
@@ -133,14 +142,14 @@ $admonition-dark-colors: map-merge(
     --adm-#{$type}: #{$color};
     --adm-#{$type}-rgb: #{hex-to-rgb($color)};
     
-    $override-color: map-get($admonition-light-header-text-overrides, $type);
+    $override-color: map.get($admonition-light-header-text-overrides, $type);
     @if $override-color {
       --adm-#{$type}-header: #{$override-color};
     }
   }
 }
 
-#{join($admonition-dark-selector, ", ")} {
+#{list.join($admonition-dark-selector, ", ")} {
   --adm-bg: #{$admonition-dark-bg};
   --adm-text: #{$admonition-dark-text};
   --adm-code-bg: #{$admonition-dark-code-bg};
