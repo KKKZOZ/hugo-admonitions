@@ -9,8 +9,6 @@ Inspiration from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish
 > [!IMPORTANT]
 > The minimum required Hugo version is `0.140.0`. If you find that features work correctly locally but not on your deployed GitHub Pages site (e.g., admonition colors are wrong), the most likely reason is that the `HUGO_VERSION` specified in your GitHub Actions workflow file (usually under `.github/workflows/`) is lower than `0.140.0`.
 
-Standard Hugo is supported. The module loads pre-compiled CSS by default, so Hugo Extended and Dart Sass are not required unless you enable SCSS customization.
-
 If you find this project useful, please consider giving it a star! ⭐
 
 ## Table of Contents
@@ -55,18 +53,24 @@ If you find this project useful, please consider giving it a star! ⭐
 - Header Only Mode 📑
 - Headless Mode 🧩
 - Foldable Admonitions 📂
-- Multi-language Support 🌐
-  - English
-  - Chinese (Simplified)
-  - Chinese (Traditional)
-  - Czech
-  - French
-  - German
-  - Korean
-  - Polish
-  - Portuguese
-  - Swahili
-  - [Localization PRs are always welcome!](https://github.com/KKKZOZ/hugo-admonitions/pulls)
+
+<details>
+<summary>Multi-language Support 🌐</summary>
+
+- Chinese (Simplified)
+- Chinese (Traditional)
+- Czech
+- English
+- French
+- German
+- Korean
+- Polish
+- Portuguese
+- Spanish
+- Swahili
+- [Localization PRs are always welcome!](https://github.com/KKKZOZ/hugo-admonitions/pulls)
+
+</details>
 
 ## Overview of all admonitions
 
