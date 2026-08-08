@@ -47,6 +47,20 @@ esac
 
 if [[ "$mode" == "scss" ]]; then
   sass --version
+
+  sass \
+    --no-source-map \
+    --style=expanded \
+    "$repo_root/assets/sass/vendors/_admonitions.scss" \
+    "$output_dir/admonitions.css"
+  cmp "$output_dir/admonitions.css" "$repo_root/assets/css/vendors/admonitions.css"
+
+  sass \
+    --no-source-map \
+    --style=compressed \
+    "$repo_root/assets/sass/vendors/_admonitions.scss" \
+    "$output_dir/admonitions.min.css"
+  cmp "$output_dir/admonitions.min.css" "$repo_root/assets/css/vendors/admonitions.min.css"
 fi
 
 HUGO_CACHEDIR="$output_dir/cache" \
@@ -85,13 +99,19 @@ fi
 grep -q '.admonition.note' "$css_file"
 
 if [[ "$mode" == "scss" ]]; then
-  grep -qi '#123456' "$css_file"
+  override_count="$(grep -oi '#123456' "$css_file" | wc -l | tr -d ' ')"
+  if [[ "$override_count" != "2" ]]; then
+    echo "Expected the user color in both light and dark palettes, found $override_count occurrences" >&2
+    exit 1
+  fi
 else
   if grep -qi '#123456' "$css_file"; then
     echo "SCSS override leaked into the pre-compiled CSS path" >&2
     exit 1
   fi
   cmp "$repo_root/assets/css/vendors/admonitions.min.css" "$css_file"
+  grep -qi '#2062ce' "$css_file"
+  grep -qi '#84b2fd' "$css_file"
 fi
 
 echo "Compatibility test passed: $mode"

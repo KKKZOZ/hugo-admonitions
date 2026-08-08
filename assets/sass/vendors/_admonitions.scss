@@ -84,33 +84,69 @@ $admonition-dark-header-bg-opacity: 0.1 !default; // Opacity for dark mode backg
 $admonition-colors-overrides: () !default;
 
 // User-provided map for overriding admonition type colors in dark mode.
-// If not specified, light mode colors will be used.
+// Light-mode user overrides also apply in dark mode unless overridden here.
 $admonition-dark-colors-overrides: () !default;
 
+// The light and dark palettes use consistent OKLCH lightness values (0.52
+// and 0.76 respectively), converted to sRGB hex for broad compatibility.
+// Source tokens (light / dark):
+// blue    oklch(0.52 0.18 260) / oklch(0.76 0.12 260)
+// cyan    oklch(0.52 0.09 220) / oklch(0.76 0.12 220)
+// green   oklch(0.52 0.14 145) / oklch(0.76 0.14 145)
+// yellow  oklch(0.52 0.09  95) / oklch(0.76 0.13  95)
+// orange  oklch(0.52 0.10  70) / oklch(0.76 0.14  70)
+// red     oklch(0.52 0.18  25) / oklch(0.76 0.13  25)
+// purple  oklch(0.52 0.17 300) / oklch(0.76 0.12 300)
+// rose    oklch(0.52 0.16 350) / oklch(0.76 0.13 350)
+// teal    oklch(0.52 0.09 185) / oklch(0.76 0.12 185)
+// indigo  oklch(0.52 0.16 280) / oklch(0.76 0.12 280)
+// neutral oklch(0.52 0.03 260) / oklch(0.76 0.03 260)
 $admonition-colors-base: (
-  abstract: #209fb5,
-  caution: #e64553,
-  code: #7287fd,
-  conclusion: #dd7878,
-  danger: #fe640b,
-  error: #d20f39,
-  example: #dc8a78,
-  experiment: #51bb2a,
-  goal: #e64553,
-  // Note: Same as caution by default
-  idea: #df8e1d,
-  important: #7d4dda,
-  info: #04a5e5,
-  memo: #e64553,
-  // Note: Same as caution by default
-  note: #096ae1,
-  notify: #0d48bd,
-  question: #179299,
-  quote: #7287fd,
-  success: #40a02b,
-  task: #8839ef,
-  tip: #179299,
-  warning: #df8e1d,
+  abstract: #13748d,
+  caution: #796823,
+  code: #5a58c2,
+  conclusion: #087970,
+  danger: #ba2b2e,
+  error: #ba2b2e,
+  example: #7a4aba,
+  experiment: #267d30,
+  goal: #a83876,
+  idea: #796823,
+  important: #7a4aba,
+  info: #13748d,
+  memo: #5f6a7b,
+  note: #2062ce,
+  notify: #5a58c2,
+  question: #087970,
+  quote: #5f6a7b,
+  success: #267d30,
+  task: #7a4aba,
+  tip: #267d30,
+  warning: #8d5d1c,
+) !default;
+
+$admonition-dark-colors-base: (
+  abstract: #42c2e6,
+  caution: #cbb042,
+  code: #a2a8fc,
+  conclusion: #3bcabb,
+  danger: #f98f87,
+  error: #f98f87,
+  example: #bd9ff2,
+  experiment: #74c878,
+  goal: #ee8dbd,
+  idea: #cbb042,
+  important: #bd9ff2,
+  info: #42c2e6,
+  memo: #a6b2c5,
+  note: #84b2fd,
+  notify: #a2a8fc,
+  question: #3bcabb,
+  quote: #a6b2c5,
+  success: #74c878,
+  task: #bd9ff2,
+  tip: #74c878,
+  warning: #e9a03e,
 ) !default;
 
 // Merge base colors with user overrides to get the final color map.
@@ -120,9 +156,10 @@ $admonition-colors: map.merge(
   $admonition-colors-overrides
 );
 
-// Dark mode colors: use light mode colors as default, then apply dark mode overrides
+// Apply light-mode user overrides to both palettes unless a dark-mode override
+// is provided explicitly.
 $admonition-dark-colors: map.merge(
-  $admonition-colors,
+  map.merge($admonition-dark-colors-base, $admonition-colors-overrides),
   $admonition-dark-colors-overrides
 );
 
