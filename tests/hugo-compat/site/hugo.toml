@@ -1,0 +1,9 @@
+baseURL = 'https://example.org/'
+defaultContentLanguage = 'en'
+disableKinds = ['home', 'taxonomy', 'term', 'RSS', 'sitemap', 'robotsTXT', '404']
+languageCode = 'en'
+title = 'Hugo Admonitions Compatibility Test'
+
+[module]
+[[module.imports]]
+path = 'github.com/KKKZOZ/hugo-admonitions'

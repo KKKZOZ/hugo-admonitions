@@ -9,32 +9,34 @@
     {{- errorf "Hugo-admonitions requires Hugo v%s or later. Please upgrade Hugo to v%s or higher." $minHugoVersion $minHugoVersion }}
   {{- end -}}
 
-  {{- /* Load styles once per page - try SCSS compilation first, fall back to pre-compiled CSS */}}
+  {{- /* Load styles once per page. Pre-compiled CSS keeps standard Hugo dependency-free. */}}
   {{- if not (.Page.Store.Get "admonition-style-loaded-flag") }}
-    {{- $cssLoaded := false }}
-
-    {{- /* Try to compile SCSS (requires Hugo Extended or Dart Sass) */}}
-    {{- with resources.Get "sass/vendors/_admonitions.scss" }}
-      {{- $opts := dict
-        "enableSourceMap" (not hugo.IsProduction)
-        "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
-        "targetPath" "css/vendors/admonitions.css"
-        "transpiler" "dartsass"
-      }}
-      {{- with . | toCSS $opts }}
-        {{- $cssLoaded = true }}
-        {{- if hugo.IsProduction }}
-          {{- with . | fingerprint }}
-            <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-          {{- end }}
-        {{- else }}
-          <link rel="stylesheet" href="{{ .RelPermalink }}">
-        {{- end }}
-      {{- end }}
+    {{- $enableSass := false }}
+    {{- with site.Params.hugoadmonitions }}
+      {{- $enableSass = .enablesass | default false }}
     {{- end }}
 
-    {{- /* Fall back to pre-compiled CSS if SCSS compilation failed or unavailable */}}
-    {{- if not $cssLoaded }}
+    {{- if $enableSass }}
+      {{- with resources.Get "sass/vendors/_admonitions.scss" }}
+        {{- $opts := dict
+          "enableSourceMap" (not hugo.IsProduction)
+          "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
+          "targetPath" "css/vendors/admonitions.css"
+          "transpiler" "dartsass"
+        }}
+        {{- with . | toCSS $opts }}
+          {{- if hugo.IsProduction }}
+            {{- with . | fingerprint }}
+              <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+            {{- end }}
+          {{- else }}
+            <link rel="stylesheet" href="{{ .RelPermalink }}">
+          {{- end }}
+        {{- end }}
+      {{- else }}
+        {{- errorf "Admonitions SCSS not found at assets/sass/vendors/_admonitions.scss" }}
+      {{- end }}
+    {{- else }}
       {{- $cssFile := cond hugo.IsProduction "css/vendors/admonitions.min.css" "css/vendors/admonitions.css" }}
       {{- with resources.Get $cssFile }}
         {{- if hugo.IsProduction }}
@@ -45,7 +47,7 @@
           <link rel="stylesheet" href="{{ .RelPermalink }}">
         {{- end }}
       {{- else }}
-        {{- warnf "Admonitions CSS not found. Neither SCSS compilation nor pre-compiled CSS is available. Ensure Hugo Extended is installed or the pre-compiled CSS exists at /assets/%s" $cssFile }}
+        {{- errorf "Admonitions CSS not found at assets/%s" $cssFile }}
       {{- end }}
     {{- end }}
 

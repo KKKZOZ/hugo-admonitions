@@ -1,0 +1,52 @@
+name: Hugo compatibility
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Hugo ${{ matrix.hugo-version }} / ${{ matrix.edition }} / ${{ matrix.mode }}
+    runs-on: ubuntu-latest
+    env:
+      DART_SASS_VERSION: "1.100.0"
+    strategy:
+      fail-fast: false
+      matrix:
+        hugo-version:
+          - "0.140.0"
+          - latest
+        edition:
+          - standard
+          - extended
+        mode:
+          - precompiled
+          - scss
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ matrix.hugo-version }}
+          extended: ${{ matrix.edition == 'extended' }}
+
+      - name: Install Dart Sass
+        if: matrix.mode == 'scss'
+        run: |
+          mkdir -p "${HOME}/.local"
+          curl -fsSL \
+            -o "${RUNNER_TEMP}/dart-sass.tar.gz" \
+            "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          tar -xzf "${RUNNER_TEMP}/dart-sass.tar.gz" -C "${HOME}/.local"
+          echo "${HOME}/.local/dart-sass" >> "${GITHUB_PATH}"
+
+      - name: Run compatibility test
+        env:
+          EXPECTED_HUGO_EDITION: ${{ matrix.edition }}
+        run: bash tests/hugo-compat/test.sh "${{ matrix.mode }}"

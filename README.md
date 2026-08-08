@@ -9,6 +9,8 @@ Inspiration from [mdbook-admonish](https://tommilligan.github.io/mdbook-admonish
 > [!IMPORTANT]
 > The minimum required Hugo version is `0.140.0`. If you find that features work correctly locally but not on your deployed GitHub Pages site (e.g., admonition colors are wrong), the most likely reason is that the `HUGO_VERSION` specified in your GitHub Actions workflow file (usually under `.github/workflows/`) is lower than `0.140.0`.
 
+Standard Hugo is supported. The module loads pre-compiled CSS by default, so Hugo Extended and Dart Sass are not required unless you enable SCSS customization.
+
 If you find this project useful, please consider giving it a star! ⭐
 
 ## Table of Contents
@@ -286,14 +288,34 @@ You can use nested admonitions too:
 
 ## Customization
 
-There are two main ways to customize the styles:
+The module uses pre-compiled CSS by default. For basic changes, override its CSS custom properties or selectors in a stylesheet loaded after the module styles; this works with standard Hugo and does not require Sass.
 
-1. **Variable Overrides (Recommended for most users):** Modify colors, opacities, dark mode selectors, etc., by overriding SASS variables. **This method is update-friendly.**
+```css
+:root {
+  --adm-bg: #ffffff;
+  --adm-note: #2563eb;
+  --adm-warning: #d97706;
+  --adm-header-bg-opacity: 0.15;
+}
+```
+
+For SCSS-based customization, there are two options:
+
+1. **Variable Overrides:** Modify colors, opacities, dark mode selectors, etc., by overriding SASS variables. **This method is update-friendly.**
 2. **Advanced SCSS Override:** For deep changes to the styling logic and CSS rules, you can override the main SCSS file.
 
 ### Variable Overrides (Recommended)
 
-This is the simplest and most common way to customize admonition styles. You only need to create a single SASS file in your project to specify your custom variable values.
+This method requires Dart Sass in both local and CI/CD build environments. Enable it in your site's configuration before creating the settings file:
+
+```toml
+[params.hugoAdmonitions]
+enableSass = true
+```
+
+With this option disabled (the default), the module does not compile SCSS and uses the pre-compiled CSS instead.
+
+Create a single SASS file in your project to specify your custom variable values.
 
 1. **Create the user settings SASS file:**
 
@@ -471,6 +493,15 @@ If you need to make more fundamental changes to the admonition styles beyond wha
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a [Pull Request](https://github.com/KKKZOZ/hugo-admonitions/pulls).
+
+Run the Hugo compatibility checks locally with:
+
+```shell
+bash tests/hugo-compat/test.sh precompiled
+bash tests/hugo-compat/test.sh scss
+```
+
+The `scss` mode requires Dart Sass in your `PATH`.
 
 Before you submit a pull request, please ensure that you have run `npm install`. This will install a husky hook that automatically checks if your commit messages adhere to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. Commit messages that do not meet this standard will not pass the automated checks for pull requests.
 

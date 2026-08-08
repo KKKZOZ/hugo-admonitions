@@ -1,10 +1,10 @@
 # Pre-compiled Admonitions CSS
 
-These CSS files are pre-compiled from `assets/sass/vendors/_admonitions.scss` so the module works on standard Hugo (without Hugo Extended or Dart Sass).
+These CSS files are pre-compiled from `assets/sass/vendors/_admonitions.scss` so the module works on standard Hugo without Dart Sass.
 
 ## How rendering decides which CSS to use
 
-`layouts/_default/_markup/render-blockquote-alert.html` tries to compile the SCSS first. If Hugo Extended is available the user gets full SCSS-variable customisation. If not, the template falls back to the pre-compiled CSS in this directory.
+`layouts/_default/_markup/render-blockquote-alert.html` loads the pre-compiled CSS by default. Users who explicitly enable SCSS customization compile the source with Dart Sass instead.
 
 - `admonitions.css` - expanded (development)
 - `admonitions.min.css` - compressed (production)
@@ -23,4 +23,4 @@ sass --no-source-map --style=compressed \
   assets/css/vendors/admonitions.min.css
 ```
 
-Or run `hugo` once with Hugo Extended in this directory and copy the output from `public/css/vendors/`.
+Or enable the module's Dart Sass build, run `hugo` once, and copy the output from `public/css/vendors/`.
