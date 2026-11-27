@@ -1,8 +1,19 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
+  {{ if .IsHome }}
+    <div class="hero">
+      <h1>{{ site.Title }}</h1>
+      <p>{{ site.Params.description }}</p>
+    </div>
+  {{ else }}
+    <h1>{{ .Title }}</h1>
+  {{ end }}
 
-  <a href="{{ site.Home.RelPermalink }}">Home</a>
-  <a href="{{ (site.GetPage "/demo").RelPermalink }}">Demo</a>
+  {{ with .TableOfContents }}
+    <nav class="toc" aria-label="On this page">
+      <strong>On this page</strong>
+      {{ . }}
+    </nav>
+  {{ end }}
 
   {{ .Content }}
 {{ end }}

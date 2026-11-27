@@ -1,19 +1,23 @@
 ---
-title: "Admonition Demo"
+title: "Hugo Admonitions"
 toc: true
 ---
 
-> Test various admonitions below.
+Every callout on this page is plain Markdown, rendered by [hugo-admonitions](https://github.com/KKKZOZ/hugo-admonitions). Use the theme toggle in the header to check both color schemes.
 
-## Error Test
+## Basics
 
-> [!NOSUPPORT]
-> Helpful advice for doing things better or more easily.
+The syntax is the same as GitHub and Obsidian alerts:
 
-## GitHub Test
+```markdown
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
+```
 
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
+
+GitHub's five alert types all work:
 
 > [!TIP]
 > Helpful advice for doing things better or more easily.
@@ -27,7 +31,7 @@ toc: true
 > [!CAUTION]
 > Advises about risks or negative outcomes of certain actions.
 
-## Callout Overview
+## All 21 types
 
 > [!ABSTRACT]
 > Abstract: This paper discusses the advantages and challenges of microservice architecture.
@@ -106,19 +110,28 @@ toc: true
 > [!WARNING]
 > Urgent info that needs immediate user attention to avoid problems.
 
-## Customization
+## Custom titles
 
-Choose a callout you prefer and add a title
+Put any text after the type:
 
-> [!TIP] Summary
-> This is a summary using the `TIP` callout!
+```markdown
+> [!IDEA] A custom title
+> Any callout type can take its own title.
+```
 
-> [!IDEA] Summary
-> This is a summary using the `IDEA` callout!
+> [!IDEA] A custom title
+> Any callout type can take its own title.
 
-## Header Only Mode
+> [!TIP] Pro tip
+> Run `hugo server -D` to preview drafts while you write.
 
-You can choose to only to show the header!
+## Header only
+
+Leave out the body for a compact, single-line callout:
+
+```markdown
+> [!SUCCESS] Congratulations! Your code has been successfully deployed to production
+```
 
 > [!ABSTRACT] This paper discusses the advantages of microservice architecture
 
@@ -162,9 +175,14 @@ You can choose to only to show the header!
 
 > [!WARNING] Warning: This operation will delete all data
 
-## Headless Mode
+## Headless
 
-Show only the callout body by setting an empty title (double or single quotes):
+Set an empty title (double or single quotes) to show only the body:
+
+```markdown
+> [!TIP] ""
+> This is a body-only callout without a header.
+```
 
 > [!TIP] ""
 > This is a body-only callout without a header.
@@ -172,18 +190,66 @@ Show only the callout body by setting an empty title (double or single quotes):
 > [!INFO] ''
 > You can still use any callout type, but the header will be hidden.
 
-## Foldable Admonitions
+## Foldable
 
-> [!NOTE]- Here are the details regarding API usage:
+Add `-` (starts collapsed) or `+` (starts expanded) after the type:
+
+```markdown
+> [!NOTE]- Here are the details regarding API usage
+
+> [!TIP]+ This one starts expanded
+```
+
+> [!NOTE]- Here are the details regarding API usage
 >
 > - **Endpoint**: `/api/v1/users` is used to fetch the user list.
 > - **Authentication**: A valid `Bearer` token must be provided in the request header.
 > - **Rate Limiting**: 100 requests are allowed per minute.
 
-> [!TIP]- Click here to view the tips
+> [!TIP]+ This one starts expanded
+> Click the header to fold it away.
 
-## Nested Admonitions
+## Nested
 
-> [!question] Can admonitions be nested?
-> > [!todo] Yes!, they can.
-> > > [!example]  You can even use multiple layers of nesting.
+```markdown
+> [!QUESTION] Can admonitions be nested?
+> > [!TIP] Yes, they can.
+> > > [!EXAMPLE] You can even use multiple layers of nesting.
+```
+
+> [!QUESTION] Can admonitions be nested?
+> > [!TIP] Yes, they can.
+> > > [!EXAMPLE] You can even use multiple layers of nesting.
+
+## Obsidian aliases
+
+Obsidian's alias names render as their canonical type:
+
+```markdown
+> [!TLDR]
+> Renders as ABSTRACT.
+```
+
+> [!TLDR]
+> `TLDR` renders as `ABSTRACT`.
+
+> [!TODO]
+> `TODO` renders as `TASK`.
+
+> [!BUG]
+> `BUG` renders as `ERROR`.
+
+> [!FAQ]
+> `FAQ` renders as `QUESTION`.
+
+## Unknown types
+
+Unsupported types fall back to `NOTE`, so a typo never breaks your build:
+
+```markdown
+> [!NOSUPPORT]
+> This renders as a NOTE.
+```
+
+> [!NOSUPPORT]
+> This renders as a NOTE.

@@ -1,54 +1,122 @@
 <!DOCTYPE html>
 <html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}" data-theme="light">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ site.Title }} — Live Demo{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  <meta name="description" content="{{ site.Params.description }}">
   <script>
+    // Apply the saved or system theme before first paint to avoid a flash.
     (() => {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-
-      const toggleDarkMode = () => {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        document.querySelector('.theme-toggle').textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
-      };
-
-      document.addEventListener('DOMContentLoaded', () => {
-        const toggleButton = document.querySelector('.theme-toggle');
-        toggleButton.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light Mode' : 'Dark Mode';
-        toggleButton.addEventListener('click', toggleDarkMode);
-      });
+      let theme = null;
+      try { theme = localStorage.getItem('theme'); } catch (e) {}
+      if (!theme) theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
   <style>
+    :root {
+      --bg: #ffffff;
+      --bg-subtle: #f6f8fa;
+      --fg: #1f2328;
+      --fg-muted: #59636e;
+      --border: #d1d9e0;
+      --accent: #2062ce;
+      --code-bg: #f6f8fa;
+    }
+    html[data-theme="dark"] {
+      --bg: #0d1117;
+      --bg-subtle: #151b23;
+      --fg: #e6edf3;
+      --fg-muted: #9198a1;
+      --border: #3d444d;
+      --accent: #84b2fd;
+      --code-bg: #151b23;
+      color-scheme: dark;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-padding-top: 72px; }
     body {
-      max-width: 80ch;
-      margin: 0 auto;
-      transition: background-color 0.3s, color 0.3s;
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
     }
-    html[data-theme="light"] body {
-      background-color: #ffffff;
-      color: #000000;
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .site-header {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
     }
-    html[data-theme="dark"] body {
-      background-color: #1a1a1a;
-      color: #e0e0e0;
+    .site-header .inner {
+      max-width: 860px; margin: 0 auto; padding: 12px 16px;
+      display: flex; align-items: center; gap: 16px;
     }
+    .brand { font-weight: 700; color: var(--fg); margin-inline-end: auto; }
+    .brand:hover { text-decoration: none; }
+    .header-link { color: var(--fg-muted); font-size: 14px; }
     .theme-toggle {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-      user-select: none;
+      font: inherit; font-size: 14px; cursor: pointer;
+      color: var(--fg); background: var(--bg-subtle);
+      border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px;
     }
+
+    main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+    .hero { text-align: center; padding: 24px 0 8px; }
+    .hero h1 { font-size: 2.5rem; margin: 0; letter-spacing: -0.02em; }
+    .hero p { color: var(--fg-muted); font-size: 1.15rem; margin: 8px 0 0; }
+
+    .toc {
+      margin: 32px 0; padding: 16px 20px;
+      background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 8px;
+    }
+    .toc strong { display: block; margin-bottom: 8px; font-size: 14px; color: var(--fg-muted); }
+    .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+    .toc li { font-size: 15px; }
+
+    main h2 { margin-top: 3rem; padding-bottom: 0.3em; border-bottom: 1px solid var(--border); }
+    main h3 { margin-top: 2rem; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; }
+    main > pre, main > .highlight pre {
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px 16px; overflow-x: auto; line-height: 1.45;
+    }
+    main > p code, main li code { background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 4px; }
+    .site-footer { text-align: center; color: var(--fg-muted); font-size: 14px; padding: 0 16px 48px; }
   </style>
 </head>
 <body>
-  <div class="theme-toggle">Dark Mode</div>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
+      <a class="header-link" href="{{ site.Params.repo }}#quick-start">Install</a>
+      <a class="header-link" href="{{ site.Params.repo }}/blob/main/docs/customization.md">Customize</a>
+      <a class="header-link" href="{{ site.Params.repo }}">GitHub</a>
+      <button class="theme-toggle" type="button" aria-label="Toggle dark mode">Dark</button>
+    </div>
+  </header>
   <main>
     {{ block "main" . }}{{ end }}
   </main>
+  <footer class="site-footer">
+    Released under the MIT License · <a href="{{ site.Params.repo }}">Source on GitHub</a>
+  </footer>
+  <script>
+    (() => {
+      const html = document.documentElement;
+      const button = document.querySelector('.theme-toggle');
+      const label = () => { button.textContent = html.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark'; };
+      label();
+      button.addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        label();
+      });
+    })();
+  </script>
 </body>
 </html>

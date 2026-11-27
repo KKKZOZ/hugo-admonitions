@@ -1,0 +1,33 @@
+# Metadata for https://themes.gohugo.io
+# See https://github.com/gohugoio/hugoThemesSiteBuilder#theme-configuration
+
+name = "Hugo Admonitions"
+license = "MIT"
+licenselink = "https://github.com/KKKZOZ/hugo-admonitions/blob/main/LICENSE"
+description = "Beautiful GitHub/Obsidian-style callouts for Hugo, written in plain Markdown. 21 types, foldable, nested, light & dark mode, no shortcodes."
+homepage = "https://github.com/KKKZOZ/hugo-admonitions"
+demosite = "https://kkkzoz.github.io/hugo-admonitions/"
+
+tags = [
+  "admonition",
+  "alert",
+  "callout",
+  "component",
+  "dark mode",
+  "markdown",
+  "notice",
+]
+
+features = [
+  "21 callout types with icons",
+  "GitHub / Obsidian compatible Markdown syntax",
+  "Foldable and nested callouts",
+  "Header-only and headless modes",
+  "Light and dark mode",
+  "Works with standard Hugo (no Sass required)",
+  "i18n (11 languages)",
+]
+
+[author]
+  name = "KKKZOZ"
+  homepage = "https://blog.kkkzoz.top"

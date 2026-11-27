@@ -1,7 +1,21 @@
 baseURL = 'https://example.org/'
 languageCode = 'en'
 defaultContentLanguage = "en"
-title = 'Hugo Admonitions by KKKZOZ'
+title = 'Hugo Admonitions'
+disableKinds = ['taxonomy', 'term', 'rss', 'sitemap']
+
+[params]
+description = 'Beautiful callouts for Hugo, written in plain Markdown.'
+repo = 'https://github.com/KKKZOZ/hugo-admonitions'
+
+[markup.highlight]
+# Emit classes without a stylesheet: code stays plain and picks up the
+# module's own code colors inside callouts in both light and dark mode.
+noClasses = false
+
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 2
 
 [module]
 [[module.mounts]]
