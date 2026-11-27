@@ -27,6 +27,11 @@ jobs:
         mode:
           - precompiled
           - scss
+        # Hugo v0.170.0 dropped the extended edition: there is only one binary,
+        # and the hugo_extended_* archives are aliases of the standard build.
+        exclude:
+          - hugo-version: latest
+            edition: extended
 
     steps:
       - name: Checkout repository
