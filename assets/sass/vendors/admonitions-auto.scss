@@ -1,0 +1,4 @@
+// admonitions-auto.scss
+// Entry point used when `params.hugoAdmonitions.darkMode = "auto"`.
+// Identical to _admonitions.scss, but also follows prefers-color-scheme.
+@use "admonitions" with ($admonition-dark-mode-auto: true);

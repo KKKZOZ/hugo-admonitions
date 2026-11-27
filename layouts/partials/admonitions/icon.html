@@ -1,0 +1,21 @@
+{{- /*
+  Renders an admonition icon from layouts/partials/admonitions/icons/.
+  Context: the icon's file name, e.g. "lightbulb-solid.svg".
+
+  Adds aria-hidden="true" (icons are decorative) and a 1em default size to the
+  root <svg> when they are missing, so custom icons behave like built-in ones
+  and no icon renders huge before the stylesheet has loaded.
+*/}}
+{{- $svg := partial (printf "admonitions/icons/%s" .) . | string }}
+{{- with findRE `<svg[^>]*>` $svg 1 }}
+  {{- $open := index . 0 }}
+  {{- $extra := "" }}
+  {{- if not (findRE `\saria-hidden=` $open) }}
+    {{- $extra = print $extra ` aria-hidden="true"` }}
+  {{- end }}
+  {{- if not (findRE `\s(width|height)=` $open) }}
+    {{- $extra = print $extra ` width="1em" height="1em"` }}
+  {{- end }}
+  {{- $svg = replace $svg $open (replace $open "<svg" (print "<svg" $extra)) }}
+{{- end }}
+{{- $svg | safeHTML -}}

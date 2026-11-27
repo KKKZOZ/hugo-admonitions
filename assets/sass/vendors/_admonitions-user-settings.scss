@@ -50,3 +50,11 @@
 // // Dark Mode Global Colors
 // $admonition-dark-bg: #282a36;        // A "Dracula" theme-inspired content background
 // $admonition-dark-text: #f8f8f2;      // A corresponding light text color
+
+// =============================================================================
+// --- Option 4: Follow the Operating System's Color Scheme ---
+// =============================================================================
+// Also switch to dark mode via `prefers-color-scheme`. Explicit light/dark
+// selectors still win. Same as `params.hugoAdmonitions.darkMode = "auto"`.
+//
+// $admonition-dark-mode-auto: true;

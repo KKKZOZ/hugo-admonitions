@@ -1,26 +1,28 @@
 # Pre-compiled Admonitions CSS
 
-These CSS files are pre-compiled from `assets/sass/vendors/_admonitions.scss` so the module works on standard Hugo without Dart Sass.
+These CSS files are pre-compiled from the SCSS sources in `assets/sass/vendors/` so the module works on standard Hugo without Dart Sass.
 
 ## How rendering decides which CSS to use
 
 `layouts/_default/_markup/render-blockquote-alert.html` loads the pre-compiled CSS by default. Users who explicitly enable SCSS customization compile the source with Dart Sass instead.
 
-- `admonitions.css` - expanded (development)
-- `admonitions.min.css` - compressed (production)
+| File | Source | Used when |
+| --- | --- | --- |
+| `admonitions.css` / `admonitions.min.css` | `_admonitions.scss` | default (`darkMode = "selector"`) |
+| `admonitions-auto.css` / `admonitions-auto.min.css` | `admonitions-auto.scss` | `darkMode = "auto"` |
+
+The `.min.css` files are used in production; the expanded ones are used in development.
 
 ## Regenerating the pre-compiled CSS
 
-Whenever `_admonitions.scss` changes, regenerate both files. Either install Dart Sass (`brew install sass/sass/sass`) and run:
+Whenever the SCSS changes, regenerate all four files with Dart Sass (`brew install sass/sass/sass`):
 
 ```bash
-sass --no-source-map --style=expanded \
-  assets/sass/vendors/_admonitions.scss \
-  assets/css/vendors/admonitions.css
-
-sass --no-source-map --style=compressed \
-  assets/sass/vendors/_admonitions.scss \
-  assets/css/vendors/admonitions.min.css
+V=assets/sass/vendors C=assets/css/vendors
+sass --no-source-map --style=expanded   $V/_admonitions.scss       $C/admonitions.css
+sass --no-source-map --style=compressed $V/_admonitions.scss       $C/admonitions.min.css
+sass --no-source-map --style=expanded   $V/admonitions-auto.scss   $C/admonitions-auto.css
+sass --no-source-map --style=compressed $V/admonitions-auto.scss   $C/admonitions-auto.min.css
 ```
 
-Or enable the module's Dart Sass build, run `hugo` once, and copy the output from `public/css/vendors/`.
+`bash tests/hugo-compat/test.sh scss` fails if any of these files is out of date.

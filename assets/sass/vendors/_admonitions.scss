@@ -6,7 +6,6 @@
 // =============================================================================
 @use "sass:map";
 @use "sass:list";
-@use "sass:color";
 
 // =============================================================================
 // --- User Customization Hook ---
@@ -15,15 +14,6 @@
 // This imported file should define variables directly (e.g., $admonition-light-bg: #mycolor;)
 // or define override maps like $admonition-colors-overrides.
 @use "admonitions-user-settings" as *;
-
-// =============================================================================
-// --- Helper Function ---
-// =============================================================================
-@function hex-to-rgb($color) {
-  @return color.channel($color, "red", $space: rgb),
-    color.channel($color, "green", $space: rgb),
-    color.channel($color, "blue", $space: rgb);
-}
 
 // =============================================================================
 // --- Configuration (with !default) ---
@@ -47,6 +37,31 @@ $admonition-dark-selector: (
   "html.dark-mode",
   "html.dark-theme",
   "html.theme-dark"
+) !default;
+
+// --- Automatic Dark Mode (prefers-color-scheme) ---
+// When true, admonitions also follow the operating system's color scheme.
+// The selectors above still force dark mode, and the selectors below force
+// light mode, so sites with a manual theme toggle keep working.
+// Hugo users can enable this with `params.hugoAdmonitions.darkMode = "auto"`.
+$admonition-dark-mode-auto: false !default;
+
+$admonition-light-selector: (
+  'html[data-theme="light"]',
+  'body[data-theme="light"]',
+  'html[data-bs-theme="light"]',
+  'html[data-scheme="light"]',
+  'body[data-scheme="light"]',
+  'html[data-color-mode="light"]',
+  'body[data-color-mode="light"]',
+  "body.light",
+  "body.light-mode",
+  "body.light-theme",
+  "body.theme-light",
+  "html.light",
+  "html.light-mode",
+  "html.light-theme",
+  "html.theme-light"
 ) !default;
 
 // --- Theme Colors ---
@@ -167,52 +182,116 @@ $admonition-dark-colors: map.merge(
 // --- CSS Variables ---
 // =============================================================================
 
-:root {
-  --adm-bg: #{$admonition-light-bg};
-  --adm-text: #{$admonition-light-text};
-  --adm-code-bg: #{$admonition-light-code-bg};
-  --adm-code-text: #{$admonition-light-code-text};
-  --adm-blockquote-border: #{$admonition-light-blockquote-border};
-  --adm-header-bg-opacity: #{$admonition-light-header-bg-opacity};
-  
-  @each $type, $color in $admonition-colors {
+// Emits one palette. Header overrides that exist only in the other palette are
+// reset to `initial` so they do not leak in through inheritance.
+@mixin admonition-palette(
+  $bg,
+  $text,
+  $code-bg,
+  $code-text,
+  $blockquote-border,
+  $header-bg-opacity,
+  $colors,
+  $header-overrides,
+  $other-header-overrides
+) {
+  --adm-bg: #{$bg};
+  --adm-text: #{$text};
+  --adm-code-bg: #{$code-bg};
+  --adm-code-text: #{$code-text};
+  --adm-blockquote-border: #{$blockquote-border};
+  --adm-header-bg-opacity: #{$header-bg-opacity};
+
+  @each $type, $color in $colors {
     --adm-#{$type}: #{$color};
-    --adm-#{$type}-rgb: #{hex-to-rgb($color)};
-    
-    $override-color: map.get($admonition-light-header-text-overrides, $type);
-    @if $override-color {
-      --adm-#{$type}-header: #{$override-color};
+  }
+
+  @each $type, $override-color in $header-overrides {
+    --adm-#{$type}-header: #{$override-color};
+  }
+
+  @each $type, $unused in $other-header-overrides {
+    @if not map.has-key($header-overrides, $type) {
+      --adm-#{$type}-header: initial;
     }
   }
 }
 
+@mixin admonition-light-palette {
+  @include admonition-palette(
+    $admonition-light-bg,
+    $admonition-light-text,
+    $admonition-light-code-bg,
+    $admonition-light-code-text,
+    $admonition-light-blockquote-border,
+    $admonition-light-header-bg-opacity,
+    $admonition-colors,
+    $admonition-light-header-text-overrides,
+    $admonition-dark-header-text-overrides
+  );
+}
+
+@mixin admonition-dark-palette {
+  @include admonition-palette(
+    $admonition-dark-bg,
+    $admonition-dark-text,
+    $admonition-dark-code-bg,
+    $admonition-dark-code-text,
+    $admonition-dark-blockquote-border,
+    $admonition-dark-header-bg-opacity,
+    $admonition-dark-colors,
+    $admonition-dark-header-text-overrides,
+    $admonition-light-header-text-overrides
+  );
+}
+
+:root {
+  @include admonition-light-palette;
+}
+
 #{list.join($admonition-dark-selector, ", ")} {
-  --adm-bg: #{$admonition-dark-bg};
-  --adm-text: #{$admonition-dark-text};
-  --adm-code-bg: #{$admonition-dark-code-bg};
-  --adm-code-text: #{$admonition-dark-code-text};
-  --adm-blockquote-border: #{$admonition-dark-blockquote-border};
-  --adm-header-bg-opacity: #{$admonition-dark-header-bg-opacity};
-  
-  @each $type, $color in $admonition-dark-colors {
-    --adm-#{$type}: #{$color};
-    --adm-#{$type}-rgb: #{hex-to-rgb($color)};
-  }
-  
-  @each $type, $override-color in $admonition-dark-header-text-overrides {
-    --adm-#{$type}-header: #{$override-color};
+  @include admonition-dark-palette;
+}
+
+@if $admonition-dark-mode-auto {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      @include admonition-dark-palette;
+    }
+
+    // Explicit light-mode markers win over the OS preference.
+    #{list.join($admonition-light-selector, ", ")} {
+      @include admonition-light-palette;
+    }
   }
 }
 
 // =============================================================================
 // --- Base Admonition Structure & Styles ---
 // =============================================================================
+// Physical directions are written as logical properties so admonitions mirror
+// correctly on right-to-left pages.
+//
+// Every admonition is colored through two variables:
+//   --adm-type-color   border, header tint and (by default) header text
+//   --adm-type-header  header text and icon
+// Built-in types set them below. Custom types get them from an inline style
+// that the render hook writes, pointing at --adm-<type> and --adm-<type>-header.
 
 .admonition {
+  --adm-type-color: var(--adm-note);
+  --adm-type-header: var(--adm-type-color);
+
   margin: 1rem 0;
   border-radius: 4px;
+  border-inline-start: 4px solid var(--adm-type-color);
+  // Equivalent to rgba(<type color>, <opacity>), but needs only the color.
+  background-color: color-mix(
+    in srgb,
+    var(--adm-type-color) calc(var(--adm-header-bg-opacity) * 100%),
+    transparent
+  );
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 0.3s ease;
   overflow: hidden;
   position: relative;
 }
@@ -224,7 +303,6 @@ $admonition-dark-colors: map.merge(
   font-weight: 600;
   font-size: 1.1rem;
   border-radius: 4px 4px 0 0;
-  transition: color 0.3s ease;
   position: relative;
   z-index: 1;
   color: var(--adm-type-header, var(--adm-type-color));
@@ -232,10 +310,9 @@ $admonition-dark-colors: map.merge(
   svg {
     width: 1.1em;
     height: 1.1em;
-    margin-right: 0.5rem;
+    margin-inline-end: 0.5rem;
     fill: currentColor;
     flex-shrink: 0;
-    transition: fill 0.3s ease;
   }
 
   span {
@@ -246,7 +323,6 @@ $admonition-dark-colors: map.merge(
 .admonition-content {
   padding: 1rem;
   border-radius: 0 0 4px 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
   background-color: var(--adm-bg);
   color: var(--adm-text);
@@ -260,14 +336,13 @@ $admonition-dark-colors: map.merge(
   ol {
     margin-top: 0;
     margin-bottom: 0.75rem;
-    padding-left: 1.5rem;
+    padding-inline-start: 1.5rem;
   }
   blockquote {
     margin: 0 0 0.75rem 0;
-    padding-left: 1rem;
-    border-left: 3px solid var(--adm-blockquote-border);
+    padding-inline-start: 1rem;
+    border-inline-start: 3px solid var(--adm-blockquote-border);
     font-style: italic;
-    transition: border-color 0.3s ease, color 0.3s ease; // Keep transitions
     color: inherit;
   }
   code:not(pre > code) {
@@ -275,7 +350,6 @@ $admonition-dark-colors: map.merge(
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 0.9em;
-    transition: background-color 0.3s ease, color 0.3s ease;
     background-color: var(--adm-code-bg);
     color: var(--adm-code-text);
   }
@@ -284,7 +358,6 @@ $admonition-dark-colors: map.merge(
     padding: 0.8rem 1rem;
     border-radius: 3px;
     overflow-x: auto;
-    transition: background-color 0.3s ease; // Keep transitions
     background-color: var(--adm-code-bg);
 
     code {
@@ -313,8 +386,6 @@ $admonition-dark-colors: map.merge(
 // =============================================================================
 @each $type, $color in $admonition-colors {
   .admonition.#{$type} {
-    border-left: 4px solid var(--adm-#{$type});
-    background-color: rgba(var(--adm-#{$type}-rgb), var(--adm-header-bg-opacity));
     --adm-type-color: var(--adm-#{$type});
     --adm-type-header: var(--adm-#{$type}-header, var(--adm-#{$type}));
   }
@@ -323,38 +394,93 @@ $admonition-dark-colors: map.merge(
 // =============================================================================
 // --- Custom Admonition Folding Marker ---
 // =============================================================================
-.admonition {
-  // Target the summary element only when it's a direct child of a foldable admonition (<details>)
-  & > summary {
-    list-style: none; /* For Firefox */
-    &::-webkit-details-marker {
-      /* For Chrome, Safari, Edge */
-      display: none;
-    }
-    cursor: pointer;
-    position: relative; // Ensures it can stack if needed
-    z-index: 2; // Position above content background if overlapping occurs
+// The chevron is a CSS mask, so it follows the header color and renders the
+// same in every font. It points toward the inline end while closed and down
+// while open.
+.admonition > summary {
+  list-style: none; // Hide the default marker (Firefox)
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
 
-    &::after {
-      content: ">"; /* Use a simple chevron character */
-      display: inline-block; /* Allows transforms and margins */
-      font-weight: bold;
-      // Use margin-left to add space BEFORE the indicator (after the text)
-      margin-left: 0.6em; /* Adjust spacing as needed */
-      transition: transform 0.2s ease-in-out; /* Smooth rotation */
-      transform-origin: center; /* Rotate around the center */
-      // Inherit the color from the summary text (which gets set by header color rule)
-      color: currentColor;
-      // Optional: Adjust vertical alignment if needed
-      // vertical-align: middle;
-    }
-
-    // Prevent the title span from growing and pushing the ::after pseudo-element
-    // This should already be handled by the flex properties in .admonition-header
-    // & > span { flex-grow: 0; } // Re-add if marker gets pushed
+  &::-webkit-details-marker {
+    display: none; // Hide the default marker (Safari)
   }
 
-  &[open] > summary::after {
-    transform: rotate(90deg); /* Rotate the chevron down */
+  &::after {
+    content: "";
+    inline-size: 0.8em;
+    block-size: 0.8em;
+    flex-shrink: 0;
+    margin-inline-start: 0.6em;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5.3 1.3 4 2.6 9.4 8 4 13.4l1.3 1.3L12 8z'/%3E%3C/svg%3E")
+      no-repeat center / contain;
+  }
+
+  &:dir(rtl)::after {
+    rotate: 180deg;
+  }
+}
+
+.admonition[open] > summary::after {
+  rotate: 90deg;
+}
+
+// =============================================================================
+// --- Motion ---
+// =============================================================================
+// Transitions only run for users who have not asked for reduced motion.
+@media (prefers-reduced-motion: no-preference) {
+  .admonition {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .admonition-header {
+    transition: color 0.3s ease;
+
+    svg {
+      transition: fill 0.3s ease;
+    }
+  }
+
+  .admonition-content {
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    blockquote {
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    code:not(pre > code) {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    pre {
+      transition: background-color 0.3s ease;
+    }
+  }
+
+  .admonition > summary::after {
+    transition: rotate 0.2s ease-in-out;
+  }
+}
+
+// =============================================================================
+// --- Print ---
+// =============================================================================
+@media print {
+  .admonition {
+    box-shadow: none;
+    break-inside: avoid;
+    print-color-adjust: exact;
+  }
+
+  // Print folded admonitions expanded. Browsers without ::details-content
+  // support ignore this rule and print them as they are on screen.
+  .admonition::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+
+  .admonition > summary::after {
+    display: none;
   }
 }

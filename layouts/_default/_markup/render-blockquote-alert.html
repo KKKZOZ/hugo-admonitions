@@ -12,16 +12,24 @@
   {{- /* Load styles once per page. Pre-compiled CSS keeps standard Hugo dependency-free. */}}
   {{- if not (.Page.Store.Get "admonition-style-loaded-flag") }}
     {{- $enableSass := false }}
+    {{- $darkMode := "selector" }}
     {{- with site.Params.hugoadmonitions }}
       {{- $enableSass = .enablesass | default false }}
+      {{- $darkMode = .darkmode | default "selector" | lower }}
     {{- end }}
+    {{- if not (in (slice "selector" "auto") $darkMode) }}
+      {{- errorf "Hugo-admonitions: params.hugoAdmonitions.darkMode must be \"selector\" or \"auto\", got %q." $darkMode }}
+    {{- end }}
+    {{- /* "auto" also follows prefers-color-scheme; see admonitions-auto.scss. */}}
+    {{- $styleName := cond (eq $darkMode "auto") "admonitions-auto" "admonitions" }}
 
     {{- if $enableSass }}
-      {{- with resources.Get "sass/vendors/_admonitions.scss" }}
+      {{- $sassFile := cond (eq $darkMode "auto") "sass/vendors/admonitions-auto.scss" "sass/vendors/_admonitions.scss" }}
+      {{- with resources.Get $sassFile }}
         {{- $opts := dict
           "enableSourceMap" (not hugo.IsProduction)
           "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
-          "targetPath" "css/vendors/admonitions.css"
+          "targetPath" (printf "css/vendors/%s.css" $styleName)
           "transpiler" "dartsass"
         }}
         {{- with . | toCSS $opts }}
@@ -34,10 +42,10 @@
           {{- end }}
         {{- end }}
       {{- else }}
-        {{- errorf "Admonitions SCSS not found at assets/sass/vendors/_admonitions.scss" }}
+        {{- errorf "Admonitions SCSS not found at assets/%s" $sassFile }}
       {{- end }}
     {{- else }}
-      {{- $cssFile := cond hugo.IsProduction "css/vendors/admonitions.min.css" "css/vendors/admonitions.css" }}
+      {{- $cssFile := printf "css/vendors/%s%s.css" $styleName (cond hugo.IsProduction ".min" "") }}
       {{- with resources.Get $cssFile }}
         {{- if hugo.IsProduction }}
           {{- with . | fingerprint }}
@@ -79,8 +87,47 @@
     "warning"    "triangle-exclamation-solid.svg"
   }}
 
-  {{- /* Determine type and title */}}
-  {{- $type := cond (index $icons .AlertType) .AlertType "note" }}
+  {{- /* Obsidian-compatible aliases, rendered as their canonical type */}}
+  {{- $aliases := dict
+    "attention" "warning"
+    "bug"       "error"
+    "check"     "success"
+    "cite"      "quote"
+    "done"      "success"
+    "fail"      "error"
+    "failure"   "error"
+    "faq"       "question"
+    "help"      "question"
+    "hint"      "tip"
+    "missing"   "error"
+    "summary"   "abstract"
+    "tldr"      "abstract"
+    "todo"      "task"
+  }}
+
+  {{- /* Determine the type. Precedence: built-in type, custom type (the site
+    provides layouts/partials/admonitions/icons/<type>.svg), alias, then note. */}}
+  {{- $alertType := .AlertType }}
+  {{- $type := "note" }}
+  {{- $iconFile := "" }}
+  {{- $custom := false }}
+  {{- if index $icons $alertType }}
+    {{- $type = $alertType }}
+  {{- else if and (findRE `^[a-z][a-z0-9_-]*$` $alertType) (templates.Exists (printf "partials/admonitions/icons/%s.svg" $alertType)) }}
+    {{- $type = $alertType }}
+    {{- $iconFile = printf "%s.svg" $alertType }}
+    {{- $custom = true }}
+  {{- else if index $aliases $alertType }}
+    {{- $type = index $aliases $alertType }}
+  {{- end }}
+  {{- if not $custom }}
+    {{- $iconFile = index $icons $type }}
+    {{- if not (templates.Exists (printf "partials/admonitions/icons/%s" $iconFile)) }}
+      {{- errorf "The blockquote render hook was unable to find the icon partial at layouts/partials/admonitions/icons/%s for admonition type '%s'." $iconFile $type }}
+    {{- end }}
+  {{- end }}
+
+  {{- /* Determine the title */}}
   {{- $rawTitle := or .AlertTitle "" }}
   {{- $headless := false }}
   {{- if $rawTitle }}
@@ -91,21 +138,15 @@
     {{- end }}
   {{- end }}
   {{- $title := or .AlertTitle (T (printf "admonitions.%s" $type)) (title $type) }}
-  {{- $iconFile := index $icons $type }}
-  {{- $partial := printf "admonitions/icons/%s" $iconFile }}
-
-  {{- /* Check if icon exists */}}
-  {{- if not (templates.Exists (printf "partials/%s" $partial)) }}
-    {{- errorf "The blockquote render hook was unable to find the icon partial at layouts/partials/%s for admonition type '%s'." $partial $type }}
-  {{- end }}
+  {{- $icon := partialCached "admonitions/icon.html" $iconFile $iconFile }}
 
   {{- /* Check if .AlertSign exists to determine if it's foldable */}}
   {{- if and .AlertSign (not $headless) }}
     {{- /* --- START Foldable Admonition HTML (using <details>) --- */}}
-    {{- /* The 'open' attribute could be conditionally added based on .AlertSign, e.g., if eq .AlertSign "-" */}}
-    <details class="admonition {{ $type }}">
+    {{- /* "+" starts expanded and "-" starts collapsed, matching Obsidian. */}}
+    <details class="admonition {{ $type }}"{{ if $custom }} style="--adm-type-color: var(--adm-{{ $type }}, var(--adm-note)); --adm-type-header: var(--adm-{{ $type }}-header, var(--adm-type-color))"{{ end }}{{ if eq .AlertSign "+" }} open{{ end }}>
       <summary class="admonition-header">
-        {{- partialCached $partial . }}
+        {{- $icon }}
         <span>{{ $title }}</span>
         {{- /* Optional: Add a custom chevron/indicator here via span/svg if you hide the default one */}}
       </summary>
@@ -118,10 +159,10 @@
     {{- /* --- END Foldable Admonition HTML --- */}}
   {{- else }}
     {{- /* --- START Non-Foldable Admonition HTML (using <div>) --- */}}
-    <div class="admonition {{ $type }}{{ if $headless }} admonition--headless{{ end }}">
+    <div class="admonition {{ $type }}{{ if $headless }} admonition--headless{{ end }}"{{ if $custom }} style="--adm-type-color: var(--adm-{{ $type }}, var(--adm-note)); --adm-type-header: var(--adm-{{ $type }}-header, var(--adm-type-color))"{{ end }}>
       {{- if not $headless }}
       <div class="admonition-header">
-        {{- partialCached $partial . }}
+        {{- $icon }}
         <span>{{ $title }}</span>
       </div>
       {{- end }}

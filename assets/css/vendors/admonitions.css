@@ -6,47 +6,26 @@
   --adm-blockquote-border: #e0e0e0;
   --adm-header-bg-opacity: 0.1;
   --adm-abstract: #13748d;
-  --adm-abstract-rgb: 19, 116, 141;
   --adm-caution: #796823;
-  --adm-caution-rgb: 121, 104, 35;
   --adm-code: #5a58c2;
-  --adm-code-rgb: 90, 88, 194;
   --adm-conclusion: #087970;
-  --adm-conclusion-rgb: 8, 121, 112;
   --adm-danger: #ba2b2e;
-  --adm-danger-rgb: 186, 43, 46;
   --adm-error: #ba2b2e;
-  --adm-error-rgb: 186, 43, 46;
   --adm-example: #7a4aba;
-  --adm-example-rgb: 122, 74, 186;
   --adm-experiment: #267d30;
-  --adm-experiment-rgb: 38, 125, 48;
   --adm-goal: #a83876;
-  --adm-goal-rgb: 168, 56, 118;
   --adm-idea: #796823;
-  --adm-idea-rgb: 121, 104, 35;
   --adm-important: #7a4aba;
-  --adm-important-rgb: 122, 74, 186;
   --adm-info: #13748d;
-  --adm-info-rgb: 19, 116, 141;
   --adm-memo: #5f6a7b;
-  --adm-memo-rgb: 95, 106, 123;
   --adm-note: #2062ce;
-  --adm-note-rgb: 32, 98, 206;
   --adm-notify: #5a58c2;
-  --adm-notify-rgb: 90, 88, 194;
   --adm-question: #087970;
-  --adm-question-rgb: 8, 121, 112;
   --adm-quote: #5f6a7b;
-  --adm-quote-rgb: 95, 106, 123;
   --adm-success: #267d30;
-  --adm-success-rgb: 38, 125, 48;
   --adm-task: #7a4aba;
-  --adm-task-rgb: 122, 74, 186;
   --adm-tip: #267d30;
-  --adm-tip-rgb: 38, 125, 48;
   --adm-warning: #8d5d1c;
-  --adm-warning-rgb: 141, 93, 28;
 }
 
 html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[data-scheme=dark], body[data-scheme=dark], html[data-color-mode=dark], body[data-color-mode=dark], body.dark, body.dark-mode, body.dark-theme, body.theme-dark, html.dark, html.dark-mode, html.dark-theme, html.theme-dark {
@@ -57,54 +36,36 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
   --adm-blockquote-border: #45475a;
   --adm-header-bg-opacity: 0.1;
   --adm-abstract: #42c2e6;
-  --adm-abstract-rgb: 66, 194, 230;
   --adm-caution: #cbb042;
-  --adm-caution-rgb: 203, 176, 66;
   --adm-code: #a2a8fc;
-  --adm-code-rgb: 162, 168, 252;
   --adm-conclusion: #3bcabb;
-  --adm-conclusion-rgb: 59, 202, 187;
   --adm-danger: #f98f87;
-  --adm-danger-rgb: 249, 143, 135;
   --adm-error: #f98f87;
-  --adm-error-rgb: 249, 143, 135;
   --adm-example: #bd9ff2;
-  --adm-example-rgb: 189, 159, 242;
   --adm-experiment: #74c878;
-  --adm-experiment-rgb: 116, 200, 120;
   --adm-goal: #ee8dbd;
-  --adm-goal-rgb: 238, 141, 189;
   --adm-idea: #cbb042;
-  --adm-idea-rgb: 203, 176, 66;
   --adm-important: #bd9ff2;
-  --adm-important-rgb: 189, 159, 242;
   --adm-info: #42c2e6;
-  --adm-info-rgb: 66, 194, 230;
   --adm-memo: #a6b2c5;
-  --adm-memo-rgb: 166, 178, 197;
   --adm-note: #84b2fd;
-  --adm-note-rgb: 132, 178, 253;
   --adm-notify: #a2a8fc;
-  --adm-notify-rgb: 162, 168, 252;
   --adm-question: #3bcabb;
-  --adm-question-rgb: 59, 202, 187;
   --adm-quote: #a6b2c5;
-  --adm-quote-rgb: 166, 178, 197;
   --adm-success: #74c878;
-  --adm-success-rgb: 116, 200, 120;
   --adm-task: #bd9ff2;
-  --adm-task-rgb: 189, 159, 242;
   --adm-tip: #74c878;
-  --adm-tip-rgb: 116, 200, 120;
   --adm-warning: #e9a03e;
-  --adm-warning-rgb: 233, 160, 62;
 }
 
 .admonition {
+  --adm-type-color: var(--adm-note);
+  --adm-type-header: var(--adm-type-color);
   margin: 1rem 0;
   border-radius: 4px;
+  border-inline-start: 4px solid var(--adm-type-color);
+  background-color: color-mix(in srgb, var(--adm-type-color) calc(var(--adm-header-bg-opacity) * 100%), transparent);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 0.3s ease;
   overflow: hidden;
   position: relative;
 }
@@ -116,7 +77,6 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
   font-weight: 600;
   font-size: 1.1rem;
   border-radius: 4px 4px 0 0;
-  transition: color 0.3s ease;
   position: relative;
   z-index: 1;
   color: var(--adm-type-header, var(--adm-type-color));
@@ -124,10 +84,9 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
 .admonition-header svg {
   width: 1.1em;
   height: 1.1em;
-  margin-right: 0.5rem;
+  margin-inline-end: 0.5rem;
   fill: currentColor;
   flex-shrink: 0;
-  transition: fill 0.3s ease;
 }
 .admonition-header span {
   flex-grow: 1;
@@ -136,7 +95,6 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
 .admonition-content {
   padding: 1rem;
   border-radius: 0 0 4px 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
   background-color: var(--adm-bg);
   color: var(--adm-text);
@@ -149,21 +107,19 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
 .admonition-content ol {
   margin-top: 0;
   margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+  padding-inline-start: 1.5rem;
 }
 .admonition-content blockquote {
   margin: 0 0 0.75rem 0;
-  padding-left: 1rem;
-  border-left: 3px solid var(--adm-blockquote-border);
+  padding-inline-start: 1rem;
+  border-inline-start: 3px solid var(--adm-blockquote-border);
   font-style: italic;
-  transition: border-color 0.3s ease, color 0.3s ease;
   color: inherit;
 }
 .admonition-content code:not(pre > code) {
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-size: 0.9em;
-  transition: background-color 0.3s ease, color 0.3s ease;
   background-color: var(--adm-code-bg);
   color: var(--adm-code-text);
 }
@@ -172,7 +128,6 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
   padding: 0.8rem 1rem;
   border-radius: 3px;
   overflow-x: auto;
-  transition: background-color 0.3s ease;
   background-color: var(--adm-code-bg);
 }
 .admonition-content pre code {
@@ -191,173 +146,173 @@ html[data-theme=dark], body[data-theme=dark], html[data-bs-theme=dark], html[dat
 }
 
 .admonition.abstract {
-  border-left: 4px solid var(--adm-abstract);
-  background-color: rgba(var(--adm-abstract-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-abstract);
   --adm-type-header: var(--adm-abstract-header, var(--adm-abstract));
 }
 
 .admonition.caution {
-  border-left: 4px solid var(--adm-caution);
-  background-color: rgba(var(--adm-caution-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-caution);
   --adm-type-header: var(--adm-caution-header, var(--adm-caution));
 }
 
 .admonition.code {
-  border-left: 4px solid var(--adm-code);
-  background-color: rgba(var(--adm-code-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-code);
   --adm-type-header: var(--adm-code-header, var(--adm-code));
 }
 
 .admonition.conclusion {
-  border-left: 4px solid var(--adm-conclusion);
-  background-color: rgba(var(--adm-conclusion-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-conclusion);
   --adm-type-header: var(--adm-conclusion-header, var(--adm-conclusion));
 }
 
 .admonition.danger {
-  border-left: 4px solid var(--adm-danger);
-  background-color: rgba(var(--adm-danger-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-danger);
   --adm-type-header: var(--adm-danger-header, var(--adm-danger));
 }
 
 .admonition.error {
-  border-left: 4px solid var(--adm-error);
-  background-color: rgba(var(--adm-error-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-error);
   --adm-type-header: var(--adm-error-header, var(--adm-error));
 }
 
 .admonition.example {
-  border-left: 4px solid var(--adm-example);
-  background-color: rgba(var(--adm-example-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-example);
   --adm-type-header: var(--adm-example-header, var(--adm-example));
 }
 
 .admonition.experiment {
-  border-left: 4px solid var(--adm-experiment);
-  background-color: rgba(var(--adm-experiment-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-experiment);
   --adm-type-header: var(--adm-experiment-header, var(--adm-experiment));
 }
 
 .admonition.goal {
-  border-left: 4px solid var(--adm-goal);
-  background-color: rgba(var(--adm-goal-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-goal);
   --adm-type-header: var(--adm-goal-header, var(--adm-goal));
 }
 
 .admonition.idea {
-  border-left: 4px solid var(--adm-idea);
-  background-color: rgba(var(--adm-idea-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-idea);
   --adm-type-header: var(--adm-idea-header, var(--adm-idea));
 }
 
 .admonition.important {
-  border-left: 4px solid var(--adm-important);
-  background-color: rgba(var(--adm-important-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-important);
   --adm-type-header: var(--adm-important-header, var(--adm-important));
 }
 
 .admonition.info {
-  border-left: 4px solid var(--adm-info);
-  background-color: rgba(var(--adm-info-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-info);
   --adm-type-header: var(--adm-info-header, var(--adm-info));
 }
 
 .admonition.memo {
-  border-left: 4px solid var(--adm-memo);
-  background-color: rgba(var(--adm-memo-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-memo);
   --adm-type-header: var(--adm-memo-header, var(--adm-memo));
 }
 
 .admonition.note {
-  border-left: 4px solid var(--adm-note);
-  background-color: rgba(var(--adm-note-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-note);
   --adm-type-header: var(--adm-note-header, var(--adm-note));
 }
 
 .admonition.notify {
-  border-left: 4px solid var(--adm-notify);
-  background-color: rgba(var(--adm-notify-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-notify);
   --adm-type-header: var(--adm-notify-header, var(--adm-notify));
 }
 
 .admonition.question {
-  border-left: 4px solid var(--adm-question);
-  background-color: rgba(var(--adm-question-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-question);
   --adm-type-header: var(--adm-question-header, var(--adm-question));
 }
 
 .admonition.quote {
-  border-left: 4px solid var(--adm-quote);
-  background-color: rgba(var(--adm-quote-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-quote);
   --adm-type-header: var(--adm-quote-header, var(--adm-quote));
 }
 
 .admonition.success {
-  border-left: 4px solid var(--adm-success);
-  background-color: rgba(var(--adm-success-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-success);
   --adm-type-header: var(--adm-success-header, var(--adm-success));
 }
 
 .admonition.task {
-  border-left: 4px solid var(--adm-task);
-  background-color: rgba(var(--adm-task-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-task);
   --adm-type-header: var(--adm-task-header, var(--adm-task));
 }
 
 .admonition.tip {
-  border-left: 4px solid var(--adm-tip);
-  background-color: rgba(var(--adm-tip-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-tip);
   --adm-type-header: var(--adm-tip-header, var(--adm-tip));
 }
 
 .admonition.warning {
-  border-left: 4px solid var(--adm-warning);
-  background-color: rgba(var(--adm-warning-rgb), var(--adm-header-bg-opacity));
   --adm-type-color: var(--adm-warning);
   --adm-type-header: var(--adm-warning-header, var(--adm-warning));
 }
 
 .admonition > summary {
-  list-style: none; /* For Firefox */
-}
-.admonition > summary::-webkit-details-marker {
-  /* For Chrome, Safari, Edge */
-  display: none;
-}
-.admonition > summary {
+  list-style: none;
   cursor: pointer;
   position: relative;
   z-index: 2;
 }
-.admonition > summary::after {
-  content: ">"; /* Use a simple chevron character */
-  display: inline-block; /* Allows transforms and margins */
-  font-weight: bold;
-  margin-left: 0.6em; /* Adjust spacing as needed */
-  transition: transform 0.2s ease-in-out; /* Smooth rotation */
-  transform-origin: center; /* Rotate around the center */
-  color: currentColor;
+.admonition > summary::-webkit-details-marker {
+  display: none;
 }
+.admonition > summary::after {
+  content: "";
+  inline-size: 0.8em;
+  block-size: 0.8em;
+  flex-shrink: 0;
+  margin-inline-start: 0.6em;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5.3 1.3 4 2.6 9.4 8 4 13.4l1.3 1.3L12 8z'/%3E%3C/svg%3E") no-repeat center/contain;
+}
+.admonition > summary:dir(rtl)::after {
+  rotate: 180deg;
+}
+
 .admonition[open] > summary::after {
-  transform: rotate(90deg); /* Rotate the chevron down */
+  rotate: 90deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .admonition {
+    transition: box-shadow 0.3s ease;
+  }
+  .admonition-header {
+    transition: color 0.3s ease;
+  }
+  .admonition-header svg {
+    transition: fill 0.3s ease;
+  }
+  .admonition-content {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .admonition-content blockquote {
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+  .admonition-content code:not(pre > code) {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .admonition-content pre {
+    transition: background-color 0.3s ease;
+  }
+  .admonition > summary::after {
+    transition: rotate 0.2s ease-in-out;
+  }
+}
+@media print {
+  .admonition {
+    box-shadow: none;
+    break-inside: avoid;
+    print-color-adjust: exact;
+  }
+  .admonition::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+  .admonition > summary::after {
+    display: none;
+  }
 }
