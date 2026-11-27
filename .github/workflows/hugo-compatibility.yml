@@ -9,6 +9,8 @@ on:
 
 jobs:
   build:
+    # Fork PRs run in the base repository context; standalone fork runs skip this job.
+    if: github.repository == 'KKKZOZ/hugo-admonitions'
     name: Hugo ${{ matrix.hugo-version }} / ${{ matrix.edition }} / ${{ matrix.mode }}
     runs-on: ubuntu-latest
     env:
@@ -28,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
